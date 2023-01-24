@@ -34,3 +34,7 @@ void arrange_data(char* data){
   }
 	strncat(temp,data,sizeof(data));
 }
+
+
+//added a comment here
+//and here
