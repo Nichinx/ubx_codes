@@ -53,10 +53,9 @@ void setup() {
     
     rtc.begin();
     attachInterrupt(RTCINTPIN, wake, FALLING);
-//    init_Sleep(); //initialize MCU sleep state
-//    setAlarmEvery30(4); //rtc alarm settings 0 [00 & 30] 1 [05 & 35]
-//  setAlarm2();
-    samplingTime();
+//    init_Sleep(); //initialize MCU sleep state      --v.2: will not let MCU sleep.
+    setAlarmEvery30(7); //rtc alarm settings
+
 
     pinMode(LED, OUTPUT);
     pinMode(RFM95_RST, OUTPUT);
@@ -107,7 +106,7 @@ void setup() {
 //      get_rtcm();
 //   } while ((RTK() != 2) && ((millis() - start) < 300000));
 //
-//   if (RTK() == 2 && SIV() > 30){
+//   if (RTK() == 2 && SIV() > 30){   //added SIV count
 //      delay(5000);
 //      read_ublox_data();
 //      send_thru_lora(dataToSend);
@@ -120,25 +119,114 @@ void setup() {
 //  sleepNow();
 //}
 
-void loop(){
-  start = millis();
+//using samplingTime() 
+//void loop(){
+//  start = millis();
+//
+//  if (!samplingTime()) {
+//    get_rtcm();
+//  }
+//  
+//  else {
+//    do {
+//      get_rtcm();
+//    } while ((RTK() != 2) && ((millis() - start) < 300000)); 
+//    
+//    if (RTK() == 2 && SIV() > 30) {   //comment out muna sa SIV, since unsure pa sa value
+////    if (RTK() == 2) {
+//      read_ublox_data();
+//      send_thru_lora(dataToSend);
+//    }      
+//  }
+//
+//  attachInterrupt(RTCINTPIN, wake, FALLING);
+//  samplingTime();
+//  rtc.clearINTStatus();
+//  attachInterrupt(RTCINTPIN, wake, FALLING);
+//}
 
-  if (!samplingTime()) {
+
+//if ayaw magwork ng samplingTime()
+//void loop(){
+//  start = millis(); 
+//  
+//  do {
+//     get_rtcm();
+//  } while ((RTK() != 2) && ((millis() - start) < 180000)); //from 300000 (5mins) to 180000 (3mins)
+//  
+//  if (RTK() == 2 && SIV() >= 30){
+//    read_ublox_data();
+//    send_thru_lora(dataToSend);
+//  } 
+//
+//  attachInterrupt(RTCINTPIN, wake, FALLING);
+//  setAlarmEvery30(4);
+//  rtc.clearINTStatus();
+//  attachInterrupt(RTCINTPIN, wake, FALLING);
+//}
+
+//v3
+//void loop(){
+//  start = millis(); 
+//  
+//  do{
+//    get_rtcm();
+//  } while ((RTK() != 2) && ((millis() - start) < 180000)); //from 300000 (5mins) to 180000 (3mins)
+//  
+//  if (RTK() == 2 && SIV() >= 30) {   //comment out muna sa SIV, since unsure pa sa value
+//    read_ublox_data();
+//    send_thru_lora(dataToSend);
+//  }    
+//    
+//  attachInterrupt(RTCINTPIN, wake, FALLING);
+//  setAlarmEvery30(4);
+//  rtc.clearINTStatus();
+//  attachInterrupt(RTCINTPIN, wake, FALLING);
+//}
+
+//v4 01.30.2023
+//void loop(){
+//  start = millis(); 
+// 
+//  do {
+//    get_rtcm();
+//  } while (RTK() != 2);
+//  
+//  if (RTK() == 2 && SIV() >= 30) {   //comment out muna sa SIV, since unsure pa sa value
+//      if (!samplingTime()){
+//        get_rtcm();
+//      }
+//      else {
+//        read_ublox_data();
+//        send_thru_lora(dataToSend);
+//        break;
+//      } 
+//    }
+//  }
+//      
+//  attachInterrupt(RTCINTPIN, wake, FALLING);
+//  setAlarmEvery30(4);
+//  rtc.clearINTStatus();
+//  attachInterrupt(RTCINTPIN, wake, FALLING);
+//}
+
+//v5 01.31.2023
+void loop(){
+  start = millis(); 
+ 
+  do {
     get_rtcm();
-  }
+  } while (RTK() != 2);
   
-  else {
-    do {
-      get_rtcm();
-    } while ((RTK() != 2) && ((millis() - start) < 300000));
-    
-    if (RTK() == 2 && SIV() > 30) {
+  if (RTK() == 2 && SIV() >= 30) {   //comment out muna sa SIV, since unsure pa sa value
+    if (samplingTime() && samplingSec()){
       read_ublox_data();
       send_thru_lora(dataToSend);
-    }      
+    } 
   }
-
+      
   attachInterrupt(RTCINTPIN, wake, FALLING);
-  samplingTime();
+  setAlarmEvery30(7);
   rtc.clearINTStatus();
+  attachInterrupt(RTCINTPIN, wake, FALLING);
 }

@@ -384,12 +384,6 @@ void loop()
       Watchdog.reset();
       receive_ublox_data(3);
       Watchdog.reset();
-      //if (dueSamplingTime() == 1){
-      //  get_Due_Data(1, get_serverNum_from_flashMem());
-      //  Watchdog.reset();
-      //  send_rain_data(0);
-      //}
-      //Watchdog.reset();
       attachInterrupt(RTCINTPIN, wake, FALLING);
       Watchdog.reset();
       turn_OFF_GSM(get_gsm_power_mode());
@@ -401,9 +395,7 @@ void loop()
       // Two transmitter -- *edit. will set for testa and testb; sending sensor data using gsm only
       turn_ON_GSM(get_gsm_power_mode());
       Watchdog.reset();
-      send_rain_data(0);
-      Watchdog.reset();
-      receive_lora_data(4);
+      receive_ublox_data(4);
       Watchdog.reset();
       attachInterrupt(RTCINTPIN, wake, FALLING);
       Watchdog.reset();
