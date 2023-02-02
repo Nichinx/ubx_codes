@@ -8,17 +8,18 @@ void init_ublox(){
     myGNSS.setNavigationFrequency(5); //Set output to 20 times a second
 }
 
-byte fixType() {
-    byte fixType = myGNSS.getFixType();
-    Serial.print(F("Fix: "));
-    if(fixType == 0) Serial.print(F("No fix"));
-    else if(fixType == 1) Serial.print(F("Dead reckoning"));
-    else if(fixType == 2) Serial.print(F("2D"));
-    else if(fixType == 3) Serial.print(F("3D"));
-    else if(fixType == 4) Serial.print(F("GNSS + Dead reckoning"));
-    else if(fixType == 5) Serial.print(F("Time only"));
-    return fixType;
-}
+//byte fixType() {
+//    byte fixType = myGNSS.getFixType();
+//    Serial.print(F("Fix: "));
+//    Serial.print(fixType);
+//    if(fixType == 0) Serial.println(F("No fix"));
+//    else if(fixType == 1) Serial.println(F("Dead reckoning"));
+//    else if(fixType == 2) Serial.println(F("2D"));
+//    else if(fixType == 3) Serial.println(F("3D"));
+//    else if(fixType == 4) Serial.println(F("GNSS + Dead reckoning"));
+//    else if(fixType == 5) Serial.println(F("Time only"));
+//    return fixType;
+//}
 
 byte RTK(){
     byte RTK = myGNSS.getCarrierSolutionType();
@@ -32,7 +33,7 @@ byte RTK(){
 
 byte SIV() {
   byte SIV = myGNSS.getSIV();
-  Serial.print("Sat#: ");
+  Serial.print("Sat #: ");
   Serial.print(SIV);
   return SIV;
 }

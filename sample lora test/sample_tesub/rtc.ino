@@ -16,32 +16,32 @@ void setupTime()
     // }
     do
     {
-	    if (Serial.available())
-	    {
-	        YY = Serial.parseInt();
-	        MM = Serial.parseInt();
-	        DD = Serial.parseInt();
-	        hh = Serial.parseInt();
-	        mm = Serial.parseInt();
-	        ss = Serial.parseInt();
-	        dd = Serial.parseInt();
-	        delay_millis(10);
-	        adjustDate(YY, MM, DD, hh, mm, ss, dd);
-	        readTimeStamp();
-	        Serial.print("Current timestamp: ");
-	        Serial.println(Ctimestamp);
-	        done = 1;
-	    } else {
-	    	delay(10);
-	    }
-	} while (((millis() - startHere) < 120000) && done == 0); //2 minutes
+      if (Serial.available())
+      {
+          YY = Serial.parseInt();
+          MM = Serial.parseInt();
+          DD = Serial.parseInt();
+          hh = Serial.parseInt();
+          mm = Serial.parseInt();
+          ss = Serial.parseInt();
+          dd = Serial.parseInt();
+          delay_millis(10);
+          adjustDate(YY, MM, DD, hh, mm, ss, dd);
+          readTimeStamp();
+          Serial.print("Current timestamp: ");
+          Serial.println(Ctimestamp);
+          done = 1;
+      } else {
+        delay(10);
+      }
+  } while (((millis() - startHere) < 120000) && done == 0); //2 minutes
 }
 
 void adjustDate(int year, int month, int date, int hour, int min, int sec, int weekday)
 {
     DateTime dt(year, month, date, hour, min, sec, weekday);
     rtc.setDateTime(dt); // adjust date-time as defined by 'dt'
-                         // Serial.println(rtc.now().getEpoch());	//debug info
+                         // Serial.println(rtc.now().getEpoch()); //debug info
                          //char weekDay[][4] = {"Sun"-0, "Mon"-1, "Tue"-2, "Wed"-3, "Thu"-4, "Fri"-5, "Sat"-6 };
 }
 
@@ -219,102 +219,38 @@ void setAlarm()
 }
 
 int samplingTime(){
-	DateTime now = rtc.now();
-	if ((now.minute() == 0) || (now.minute() == 30)){
-		return 1;
-	 } else if ((now.minute() == 5) || (now.minute() == 35)){     //uncomment
-	 	return 1;                                                   //uncomment
-	} else if ((now.minute() == 10) || (now.minute() == 40)){
-		return 1;
-	 } else if ((now.minute() == 15) || (now.minute() == 45)){    //uncomment
-	 	return 1;                                                   //uncomment
-	} else if ((now.minute() == 20) || (now.minute() == 50)){
-		return 1;
-	 } else if ((now.minute() == 25) || (now.minute() == 55)){    //uncomment
-	 	return 1;                                                   //uncomment
+  DateTime now = rtc.now();
+  if ((now.minute() == 0) || (now.minute() == 30)){
+    return 1;
+   } else if ((now.minute() == 5) || (now.minute() == 35)){     //uncomment
+    return 1;                                                   //uncomment
+  } else if ((now.minute() == 10) || (now.minute() == 40)){
+    return 1;
+   } else if ((now.minute() == 15) || (now.minute() == 45)){    //uncomment
+    return 1;                                                   //uncomment
+  } else if ((now.minute() == 20) || (now.minute() == 50)){
+    return 1;
+   } else if ((now.minute() == 25) || (now.minute() == 55)){    //uncomment
+    return 1;                                                   //uncomment
 
-	} else {
-		return 0;
-	}
+  } else {
+    return 0;
+  }
   enable_rtc_interrupt();
 }
 
 int samplingSec(){
   DateTime now = rtc.now();
 //  if ((now.second() == 0) || (now.second() ==1)){   //working 01.31.23
-  if ((now.second() == 0) || (now.second() <=2)){
+  if ((now.second() >= 0) && (now.second() <=1)){
     return 1;
+  } if ((now.second() >= 2) && (now.second() <=3)){
+    return 1;
+//  } if ((now.second() >= 2) || (now.second() <=3)){
+//    return 1;
   } else {
     return 0;
   }
-}
-
-void setAlarm2()
-{
-    DateTime now = rtc.now(); //get the current date-time
-    int a,b,c = 0;
-
-
-  //   (now.minute() >= a ) && now.minute() <= b)
-		// store_rtc = c;
-
-    if ((now.minute() >= 0) && (now.minute() <= 4))
-    {
-        store_rtc = 5;
-    }
-	else if ((now.minute() >= 5) && (now.minute() <= 9))
-    {
-        store_rtc = 10;
-    }
-    else if ((now.minute() >= 10) && (now.minute() <= 14))
-    {
-        store_rtc = 15;
-    }
-    else if ((now.minute() >= 15) && (now.minute() <= 19))
-    {
-        store_rtc = 20;
-    }
-    else if ((now.minute() >= 20) && (now.minute() <= 24))
-    {
-        store_rtc = 25;
-    }
-    else if ((now.minute() >= 25) && (now.minute() <= 29))
-    {
-        store_rtc = 30;
-    }
-    else if ((now.minute() >= 30) && (now.minute() <= 34))
-    {
-        store_rtc = 35;
-    }
-    else if ((now.minute() >= 35) && (now.minute() <= 39))
-    {
-        store_rtc = 40;
-    }
-    else if ((now.minute() >= 40) && (now.minute() <= 44))
-    {
-        store_rtc = 45;
-    }
-    else if ((now.minute() >= 45) && (now.minute() <= 49))
-    {
-        store_rtc = 50;
-    }
-    else if ((now.minute() >= 50) && (now.minute() <= 54))
-    {
-        store_rtc = 55;
-    }
-    else if ((now.minute() >= 50) && (now.minute() <= 59))
-    {
-        store_rtc = 0;
-    }
-    rtc.enableInterrupts(store_rtc, 00); // interrupt at (m,s)
-    if (DEBUG == 1)
-    {
-        Serial.print("Next alarm: ");
-    }
-    if (DEBUG == 1)
-    {
-        Serial.println(store_rtc);
-    }
 }
 
 //30 minutes interval
