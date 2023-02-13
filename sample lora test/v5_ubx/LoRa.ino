@@ -404,7 +404,7 @@ void receive_ublox_data(uint8_t mode){
 
     while ((rcv_LoRa_flag == 0) && (timeoutFlag == false)  )
     {
-        if ((millis() - start ) >= 180000 ){
+        if ((millis() - start ) >= 180000 ){  //3 minutes timeout
             timeoutFlag = true;
         }
          if (rf95.available())
@@ -419,7 +419,6 @@ void receive_ublox_data(uint8_t mode){
                 received[i] = (uint8_t)'\0';
                 Serial.println(received);
 
-
                 if (mode == 4) { //2 lora tx
                     count2++;
                     Serial.print("received counter: ");
@@ -433,8 +432,8 @@ void receive_ublox_data(uint8_t mode){
                             strncat(received,"*",1);
                             strncat(received,Ctimestamp,13);
                             send_thru_gsm(received, get_serverNum_from_flashMem());
-                        }
-                        
+                            rcv_LoRa_flag = 0;
+                        }                        
                     else if (count2 == 2) {
                         if (strstr(received, "TES")){
                             readTimeStamp();
@@ -446,16 +445,8 @@ void receive_ublox_data(uint8_t mode){
                             rcv_LoRa_flag = 1;
                         }
                     }
-                }
-                                
-//                if (strstr(received, "TESUA")){
-//                    readTimeStamp();
-//                    Serial.print("-->>");
-//                    Serial.println(received);
-//                    strncat(received,"*",1);
-//                    strncat(received,Ctimestamp,13);
-//                    send_thru_gsm(received, get_serverNum_from_flashMem());
-//                    rcv_LoRa_flag = 1;
+                    }
+              
                 } else {
                     Serial.println("not ublox");
                 }
@@ -468,7 +459,8 @@ void receive_ublox_data(uint8_t mode){
         strncat(received,Ctimestamp,13);
         send_thru_gsm(ND, get_serverNum_from_flashMem());
     }
-    
+
+    count2=0;
     rcv_LoRa_flag = 0;
     getSensorDataFlag = false;
     valid_LoRa_tx = false;

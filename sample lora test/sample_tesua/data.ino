@@ -28,12 +28,15 @@ void read_data(){
 //    snprintf(volt, sizeof volt, "%.2f", readBatteryVoltage(10));
 //    snprintf(temp, sizeof temp, "%.2f", readTemp());
 
+    readTimeStamp();
+
     sprintf(tempstr, "TESUA: is some string; 1st data.");
     strncat(dataToSend, tempstr, String(tempstr).length() + 1);
 //    strncat(dataToSend, ",", 2);
 //    strncat(dataToSend, temp, sizeof(temp));
 //    strncat(dataToSend, ",", 2);
-//    strncat(dataToSend, volt, sizeof(volt));      
+//    strncat(dataToSend, volt, sizeof(volt));
+    strncat(dataToSend, Ctimestamp, sizeof(Ctimestamp));       
     Serial.print("data to send: ");
     Serial.println(dataToSend);  
 }

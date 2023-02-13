@@ -22,18 +22,11 @@ void read_data(){
     }
     
     char tempstr[100];
-    char volt[10];
-    char temp[10];
+    readTimeStamp();
 
-    snprintf(volt, sizeof volt, "%.2f", readBatteryVoltage(10));
-    snprintf(temp, sizeof temp, "%.2f", readTemp());
-
-    sprintf(tempstr, "TESUB: is some string; 2nd data.");
-    strncpy(dataToSend, tempstr, String(tempstr).length() + 1);
-    strncat(dataToSend, ",", 2);
-    strncat(dataToSend, temp, sizeof(temp));
-    strncat(dataToSend, ",", 2);
-    strncat(dataToSend, volt, sizeof(volt));      
+    sprintf(tempstr, "TESUB: is the other string; 2nd data.");
+    strncat(dataToSend, tempstr, String(tempstr).length() + 1);
+    strncat(dataToSend, Ctimestamp, sizeof(Ctimestamp));       
     Serial.print("data to send: ");
-    Serial.println(dataToSend);    
+    Serial.println(dataToSend);  
 }

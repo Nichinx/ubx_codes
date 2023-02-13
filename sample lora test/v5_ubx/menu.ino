@@ -734,6 +734,8 @@ void print_rtcInterval()
   Serial.println("[3] Alarm for every 15 and 45 minutes interval");
   Serial.println("[4] Alarm for every 10 minutes interval");
   Serial.println("[5] Alarm for every 5,15,25. . .  minutes interval");
+  Serial.println("[6] Alarm for every 10 minutes interval");
+  Serial.println("[7] Alarm for every 5 minutes interval");
   // Serial.println("------------------------------------------------");
 }
 

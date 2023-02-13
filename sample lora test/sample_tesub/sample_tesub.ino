@@ -27,31 +27,18 @@ volatile bool OperationFlag = false;
 #define RF95_FREQ 433.0
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
 
-// We will use Serial2 - Rx on pin 11, Tx on pin 10
-Uart Serial2 (&sercom1, 11, 10, SERCOM_RX_PAD_0, UART_TX_PAD_2);
-
-void SERCOM1_Handler() {
-  Serial2.IrqHandler();
-}
-
 // LED is turned on at 1st LoRa reception and off when nothing else received. It gives an indication of how long the incoming data stream is.
 #define LED 13
 unsigned long start;
+volatile bool done = false;
 
 void setup() {
     Serial.begin(115200);
-    Serial2.begin(115200);
-
-    // Assign pins 10 & 11 SERCOM functionality
-    pinPeripheral(10, PIO_SERCOM);
-    pinPeripheral(11, PIO_SERCOM);
-    delay(100);
+    while(!Serial);
     
     rtc.begin();
-    attachInterrupt(RTCINTPIN, wake, FALLING);
-//    init_Sleep(); //initialize MCU sleep state      --v.2: will not let MCU sleep.
-    setAlarmEvery30(7); //rtc alarm settings : every 5 minutes
-
+//    DateTime now = rtc.now();
+    
     pinMode(LED, OUTPUT);
     pinMode(RFM95_RST, OUTPUT);
     digitalWrite(RFM95_RST, HIGH);
@@ -86,24 +73,44 @@ void setup() {
     readTimeStamp();
     Serial.print("Current timestamp: ");
     Serial.println(Ctimestamp);
+//    start = millis();
+
+//    while(now.second() != 0){
+//      delay(10);
+//    }
+
 }
 
-//v5 01.31.2023
+//void loop(){
+////  if (samplingTime() && samplingSec()){
+////        read_data();
+////        send_thru_lora(dataToSend);
+////////        start = millis();
+//////        done = true;      
+////  }
+////  Serial.println("print"); 
+//////  if ((millis() - start) >= 58000){
+//////       done = false;
+//////       start = millis();
+//////  }
+//////  delay(1000);
+////}
+//
+//if (millis() - start <= 60000){ //every minute interval
+//  Serial.println("getting rtcm");
+//  delay(250);
+//} else {
+//  read_data();
+//  send_thru_lora(dataToSend);
+//  start = millis();
+//}
+//}
+
 void loop(){
-  start = millis(); 
- 
-  do {
-    Serial.println("print");
-    delay(1000);
-  } while ((millis() - start) < 180000);
-  
   if (samplingTime() && samplingSec()){
     read_data();
     send_thru_lora(dataToSend);
-  } 
-   
-  attachInterrupt(RTCINTPIN, wake, FALLING);
-  setAlarmEvery30(7);
-  rtc.clearINTStatus();
-  attachInterrupt(RTCINTPIN, wake, FALLING);
+  }
+  Serial.println("print");
+  delay(1000);
 }
