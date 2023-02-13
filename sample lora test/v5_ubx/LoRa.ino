@@ -433,9 +433,8 @@ void receive_ublox_data(uint8_t mode){
                             strncat(received,Ctimestamp,13);
                             send_thru_gsm(received, get_serverNum_from_flashMem());
                             rcv_LoRa_flag = 0;
-                        }
-                        
-                    else if (count2 ==2) {
+                        }                        
+                    else if (count2 == 2) {
                         if (strstr(received, "TES")){
                             readTimeStamp();
                             Serial.print("-->>");
