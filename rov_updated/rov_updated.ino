@@ -218,15 +218,15 @@ void loop(){
     get_rtcm();
   } while (RTK() != 2);
   
-  if (RTK() == 2 && SIV() >= 30) {   //comment out muna sa SIV, since unsure pa sa value
+  if (RTK() == 2 && SIV() >= 30) {  
     if (samplingTime() && samplingSec()){
       read_ublox_data();
       send_thru_lora(dataToSend);
     } 
   }
       
-  attachInterrupt(RTCINTPIN, wake, FALLING);
-  setAlarmEvery30(7);
-  rtc.clearINTStatus();
-  attachInterrupt(RTCINTPIN, wake, FALLING);
+//  attachInterrupt(RTCINTPIN, wake, FALLING);
+//  setAlarmEvery30(7);
+//  rtc.clearINTStatus();
+//  attachInterrupt(RTCINTPIN, wake, FALLING);
 }

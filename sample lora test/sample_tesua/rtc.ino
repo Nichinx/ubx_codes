@@ -249,6 +249,38 @@ int samplingSec(){
   }
 }
 
+int samplingMin(){
+  DateTime now = rtc.now();
+  if ((now.minute()==0) || (now.minute()==2) || (now.minute()==4) || (now.minute()==6) || (now.minute()==8)){
+    return 1;
+  } else if ((now.minute()==1) || (now.minute()==3) || (now.minute()==5) || (now.minute()==7) || (now.minute()==9)){
+    return 1;                                                   
+  } else if ((now.minute()==10) || (now.minute()==12) || (now.minute()==14) || (now.minute()==16) || (now.minute()==18)){
+    return 1;                                                   
+  } else if ((now.minute()==11) || (now.minute()==13) || (now.minute()==15) || (now.minute()==17) || (now.minute()==19)){
+    return 1;                                                   
+  } else if ((now.minute()==20) || (now.minute()==22) || (now.minute()==24) || (now.minute()==26) || (now.minute()==28)){
+    return 1;
+  } else if ((now.minute()==21) || (now.minute()==23) || (now.minute()==25) || (now.minute()==27) || (now.minute()==29)){
+    return 1;                                                   
+  } else if ((now.minute()==30) || (now.minute()==32) || (now.minute()==34) || (now.minute()==36) || (now.minute()==38)){   
+    return 1;                                                   
+  } else if ((now.minute()==31) || (now.minute()==33) || (now.minute()==35) || (now.minute()==37) || (now.minute()==39)){
+    return 1;                                                   
+  } else if ((now.minute()==40) || (now.minute()==42) || (now.minute()==44) || (now.minute()==46) || (now.minute()==48)){
+    return 1;
+  } else if ((now.minute()==41) || (now.minute()==43) || (now.minute()==45) || (now.minute()==47) || (now.minute()==49)){
+    return 1;                                                   
+  } else if ((now.minute()==50) || (now.minute()==52) || (now.minute()==54) || (now.minute()==56) || (now.minute()==58)){    
+    return 1;                                                 
+  } else if ((now.minute()==51) || (now.minute()==53) || (now.minute()==55) || (now.minute()==57) || (now.minute()==59)){
+    return 1;                                                   
+  } else {
+    return 0;
+  }
+  enable_rtc_interrupt();
+}
+
 void setAlarm2()
 {
     DateTime now = rtc.now(); //get the current date-time
