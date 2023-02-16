@@ -387,14 +387,17 @@ void receive_ublox_data(uint8_t mode) {
   int count = 0;
   int count2 = 0;
   sending_stack[0] = '\0';
-//  bool timeoutFlag = false;
-//  bool ack_receive = false;
+  bool timeoutFlag = false;
   char ACK[] = "ACK";
   char ND[] = "No UBLOX data.";
   unsigned long start = millis();
   Serial.println("waiting for UBLOX data . . .");
   
-  while (rcv_LoRa_flag == 0) {
+  while ((rcv_LoRa_flag == 0)  && (timeoutFlag == false)) {
+    if ((millis() - start ) >= 180000 ){  //3 minutes timeout
+        timeoutFlag = true;
+    }
+    
     if (rf95.available()) {
       if (rf95.recv(buf, &len2)) {
         int i = 0;
@@ -403,31 +406,30 @@ void receive_ublox_data(uint8_t mode) {
         }
         received[i] = (uint8_t)'\0';
         Serial.println(received);
-        readTimeStamp();
-        strncat(received,"*",1);
-        strncat(received,Ctimestamp,13);
 
-//        if (strstr(received, ">>")) { /*NOT LoRa: 0, 2, 6, 7*/
-//          flashLed(LED_BUILTIN, 3, 60);
-//          if (mode == 1 || mode == 3 || mode == 4 || mode == 5) {  // LoRa mode only
-//            /*remove 1st & 2nd character*/
-//            for (byte i = 0; i < strlen(received); i++) {
-//              received[i] = received[i + 2];
-//            }
             if (logger_ack_filter_enabled()) {
               if (if_receive_valid(received)) {
                 if (check_duplicates_in_stack((char *)received)) {
+                  readTimeStamp();
+                  strncat(received,"*",1);
+                  strncat(received,Ctimestamp,13);
                   aggregate_received_data(received);
                 }
               } else {
                 if (allow_unlisted()) {
                   if (check_duplicates_in_stack((char *)received)) {
                     Serial.print("Adding data from unlisted transmitter to sending stack: ");
+                    readTimeStamp();
+                    strncat(received,"*",1);
+                    strncat(received,Ctimestamp,13);
                     aggregate_received_data(received);
                   }
                 } else {
                   Serial.print("Ignoring data: ");
                   Serial.println(received);
+                  readTimeStamp();
+                  strncat(received,"*",1);
+                  strncat(received,Ctimestamp,13);
                 }
               }
             } else {
@@ -435,6 +437,9 @@ void receive_ublox_data(uint8_t mode) {
               Serial.print("Received data: ");
               Serial.println(received);
               if (check_duplicates_in_stack((char *)received)) {
+                readTimeStamp();
+                strncat(received,"*",1);
+                strncat(received,Ctimestamp,13);
                 aggregate_received_data(received);
               }
             }
@@ -442,15 +447,17 @@ void receive_ublox_data(uint8_t mode) {
             // for modes not listed yet...
             Serial.print("Received Data: ");
             Serial.println(received);
+            readTimeStamp();
+            strncat(received,"*",1);
+            strncat(received,Ctimestamp,13);
             aggregate_received_data(received);
-            tx_RSSI = String(rf95.lastRssi(), DEC);
-            Serial.print("RSSI: ");
-            Serial.println(tx_RSSI);
           }
         
-        if (strstr(received, "TES")) {
+//        if (strstr(received, "TES")) { //logger ublox name
+        if ((strstr(received, get_logger_A_from_flashMem())) || (strstr(received, get_logger_B_from_flashMem())) || (strstr(received, get_logger_C_from_flashMem())) || (strstr(received, get_logger_D_from_flashMem())) || "No Ublox") {
           if (if_receive_valid(received)) {
             lora_TX_end++;
+            
             if (mode == 4) {  // 2 LoRa transmitter
               count2++;
               Serial.print("recieved counter: ");
@@ -458,24 +465,21 @@ void receive_ublox_data(uint8_t mode) {
               
               if (count2 == 1) {
                 // SENSOR A
-                tx_RSSI = String(rf95.lastRssi(), DEC);
-                Serial.print("RSSI: ");
-                Serial.println(tx_RSSI);
-                parse_voltage(received).toCharArray(txVoltage, sizeof(txVoltage));
-                Serial.print("TX Voltage A: ");
-                Serial.println(txVoltage);
+                readTimeStamp();
+                Serial.print("-->>");
+                Serial.println(received);
+                strncat(received,"*",1);
+                strncat(received,Ctimestamp,13);
+//                send_thru_gsm(received, get_serverNum_from_flashMem());
               } else if (count2 == 2) {
                 // SENSOR B
-                tx_RSSI_B = String(rf95.lastRssi(), DEC);
-                Serial.print("RSSI: ");
-                Serial.println(tx_RSSI_B);
-                parse_voltage(received).toCharArray(txVoltageB, sizeof(txVoltageB));
-                Serial.print("TX Voltage B: ");
-                Serial.println(txVoltageB);
-                delay_millis(500);
-                get_rssi(get_logger_mode());
+                Serial.print("-->>");
+                Serial.println(received);
+                strncat(received,"*",1);
+                strncat(received,Ctimestamp,13);
+//                send_thru_gsm(received, get_serverNum_from_flashMem());
+                rcv_LoRa_flag = 1;
                 count2 = 0;
-                // rcv_LoRa_flag = 1;
               }
               
             } else if (mode == 5) {  // 3 LoRa transmitter
@@ -485,54 +489,53 @@ void receive_ublox_data(uint8_t mode) {
               
               if (count2 == 1) {
                 // SENSOR A
-                tx_RSSI = String(rf95.lastRssi(), DEC);
-                Serial.print("RSSI: ");
-                Serial.println(tx_RSSI);
-                parse_voltage(received).toCharArray(txVoltage, sizeof(txVoltage));
-                Serial.print("TX Voltage A: ");
-                Serial.println(txVoltage);
+                readTimeStamp();
+                Serial.print("-->>");
+                Serial.println(received);
+                strncat(received,"*",1);
+                strncat(received,Ctimestamp,13);
+//                send_thru_gsm(received, get_serverNum_from_flashMem());
               } else if (count2 == 2) {
                 // SENSOR B
-                tx_RSSI_B = String(rf95.lastRssi(), DEC);
-                Serial.print("RSSI: ");
-                Serial.println(tx_RSSI);
-                parse_voltage(received).toCharArray(txVoltageB, sizeof(txVoltageB));
-                Serial.print("TX Voltage B: ");
-                Serial.println(txVoltageB);
+                readTimeStamp();
+                Serial.print("-->>");
+                Serial.println(received);
+                strncat(received,"*",1);
+                strncat(received,Ctimestamp,13);
+//                send_thru_gsm(received, get_serverNum_from_flashMem());
               } else if (count2 == 3) {
                 // SENSOR C
-                tx_RSSI_C = String(rf95.lastRssi(), DEC);
-                Serial.print("RSSI: ");
-                Serial.println(tx_RSSI_B);
-                parse_voltage(received).toCharArray(txVoltageC, sizeof(txVoltageC));
-                Serial.print("TX Voltage C: ");
-                Serial.println(txVoltageC);
-                get_rssi(get_logger_mode());
+                readTimeStamp();
+                Serial.print("-->>");
+                Serial.println(received);
+                strncat(received,"*",1);
+                strncat(received,Ctimestamp,13);
+//                send_thru_gsm(received, get_serverNum_from_flashMem());
+                rcv_LoRa_flag = 1;
                 count2 = 0;
-                // rcv_LoRa_flag = 1;
               }
             } else {
               /*only 1 transmitter*/
-              tx_RSSI = String(rf95.lastRssi(), DEC);
-              Serial.print("RSSI: ");
-              Serial.println(tx_RSSI);
-              parse_voltage(received).toCharArray(txVoltage, sizeof(txVoltage));
-              Serial.print("Received Voltage: ");
-              Serial.println(txVoltage);
-              get_rssi(get_logger_mode());
-              // rcv_LoRa_flag = 1;
+                readTimeStamp();
+                Serial.print("-->>");
+                Serial.println(received);
+                strncat(received,"*",1);
+                strncat(received,Ctimestamp,13);
+//                send_thru_gsm(received, get_serverNum_from_flashMem());
+                rcv_LoRa_flag = 1;
             }
           } else {
             // If transmitter is unlisted with voltage data
             Serial.print("Unlisted transmitter voltage data: ");
             Serial.println(received);
-            if (allow_unlisted()) {
-              if (check_duplicates_in_stack((char *)received)) {
-                aggregate_received_data(received);
-                Serial.print("RSSI: ");
-                Serial.println(tx_RSSI);
+              if (allow_unlisted()) {
+                if (check_duplicates_in_stack((char *)received)) {
+                  readTimeStamp();
+                  strncat(received,"*",1);
+                  strncat(received,Ctimestamp,13);
+                  aggregate_received_data(received);
+                }
               }
-            }
           }
 
 
@@ -542,9 +545,10 @@ void receive_ublox_data(uint8_t mode) {
             if (!strstr(received, ack_key)) {
               Serial.print("Unrecognized data format :");
               Serial.println(received);
+              readTimeStamp();
+              strncat(received,"*",1);
+              strncat(received,Ctimestamp,13);
               aggregate_received_data(received);
-              Serial.print("RSSI: ");
-              Serial.println(tx_RSSI);
             }
           } else {
             if (!strstr(received, ack_key)) {
@@ -552,9 +556,10 @@ void receive_ublox_data(uint8_t mode) {
               Serial.println(received);
               if (allow_unlisted()) {
                 if (check_duplicates_in_stack((char *)received)) {
+                  readTimeStamp();
+                  strncat(received,"*",1);
+                  strncat(received,Ctimestamp,13);
                   aggregate_received_data(received);
-                  Serial.print("RSSI: ");
-                  Serial.println(tx_RSSI);
                 }
               }
             }
@@ -563,15 +568,14 @@ void receive_ublox_data(uint8_t mode) {
       }
     }
 
-    if ((millis() - start) > LORATIMEOUTWITHACK) {
+    if (timeoutFlag) {
       readTimeStamp();
       strncat(received,"*",1);
       strncat(received,Ctimestamp,13);
       send_thru_gsm(ND, get_serverNum_from_flashMem());
-      get_rssi(get_logger_mode());
       rcv_LoRa_flag = 1;
-      start = millis();
     }
+    
     if (mode == 4) {
       if (lora_TX_end == 2) {
         rcv_LoRa_flag = 1;
@@ -585,8 +589,6 @@ void receive_ublox_data(uint8_t mode) {
         rcv_LoRa_flag = 1;
       }
     }
-
-  //Split and send aggregated data [sending_stack] here
 
   if (mode != 1) {
     send_message_segments(sending_stack);

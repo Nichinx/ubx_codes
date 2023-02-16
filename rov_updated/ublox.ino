@@ -116,7 +116,7 @@ void read_ublox_data(){
     snprintf(temp, sizeof temp, "%.2f", readTemp());
 
     if (RTK()==2 && SIV() > 30){
-      for (int i= 0; i < DATA_TO_AVERAGE; i++){
+//      for (int i= 0; i < DATA_TO_AVERAGE; i++){
     
         int32_t latitude = myGNSS.getHighResLatitude();
         int8_t latitudeHp = myGNSS.getHighResLatitudeHp();
@@ -165,12 +165,12 @@ void read_ublox_data(){
         // Now convert to m
         f_accuracy = f_accuracy + ((float)accuracy/ 10000.0); // Convert from mm * 10^-1 to m
         //delay(50);
-      }
+//      }
   
-      lat = lat / DATA_TO_AVERAGE;
-      lon = lon / DATA_TO_AVERAGE;
-      f_accuracy = f_accuracy / DATA_TO_AVERAGE;
-      f_msl = f_msl / DATA_TO_AVERAGE;
+//      lat = lat / DATA_TO_AVERAGE;
+//      lon = lon / DATA_TO_AVERAGE;
+//      f_accuracy = f_accuracy / DATA_TO_AVERAGE;
+//      f_msl = f_msl / DATA_TO_AVERAGE;
    
       sprintf(tempstr, "TESUB:%d,%.9f,%.9f,%.4f,%.4f,%d",rtk_fixtype,lat,lon,f_accuracy,f_msl,sat_num);
       strncpy(dataToSend, tempstr, String(tempstr).length() + 1);

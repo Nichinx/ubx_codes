@@ -14,7 +14,7 @@ SFE_UBLOX_GNSS myGNSS;
 #define RFWAITTIME 500 //maximum milliseconds to wait for next LoRa packet - used to be 600 - may have been too long
 
 char dataToSend[200];
-#define DATA_TO_AVERAGE 1 //changed from 5 to 1 -- removes averaging
+//#define DATA_TO_AVERAGE 1 //changed from 5 to 1 -- removes averaging
 
 char Ctimestamp[13] = "";
 uint16_t store_rtc = 00; //store rtc alarm
@@ -106,10 +106,11 @@ void setup() {
 //      get_rtcm();
 //   } while ((RTK() != 2) && ((millis() - start) < 300000));
 //
-//   if (RTK() == 2 && SIV() > 30){   //added SIV count
-//      delay(5000);
-//      read_ublox_data();
-//      send_thru_lora(dataToSend);
+//   if (RTK() == 2 && SIV() >= 30){   //added SIV count
+//       for (int c = 0; c < 10; c++){    //added counter
+//          read_ublox_data();
+//          send_thru_lora(dataToSend);
+//       }
 //   } 
 //    
 //  attachInterrupt(RTCINTPIN, wake, FALLING);
@@ -212,11 +213,11 @@ void setup() {
 
 //v5 01.31.2023
 void loop(){
-  start = millis(); 
+//  start = millis(); 
  
-  do {
+//  do {
     get_rtcm();
-  } while (RTK() != 2);
+//  } while (RTK() != 2);
   
   if (RTK() == 2 && SIV() >= 30) {  
     if (samplingTime() && samplingSec()){
@@ -224,9 +225,4 @@ void loop(){
       send_thru_lora(dataToSend);
     } 
   }
-      
-//  attachInterrupt(RTCINTPIN, wake, FALLING);
-//  setAlarmEvery30(7);
-//  rtc.clearINTStatus();
-//  attachInterrupt(RTCINTPIN, wake, FALLING);
 }

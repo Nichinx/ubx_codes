@@ -27,10 +27,10 @@ void send_thru_lora(char* radiopacket){
     delay(100);  
 }
 
-void arrange_data(char* data){
-	char temp[200];
- 	for(int i=0; i<200; i++){
-      temp[i] = (uint8_t)'0';
-  }
-	strncat(temp,data,sizeof(data));
-}
+//void arrange_data(char* data){
+//	char temp[200];
+// 	for(int i=0; i<200; i++){
+//      temp[i] = (uint8_t)'0';
+//  }
+//	strncat(temp,data,sizeof(data));
+//}

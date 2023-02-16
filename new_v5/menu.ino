@@ -119,7 +119,8 @@ void getAtcommand()
             turn_ON_GSM(get_gsm_power_mode());
 //            send_rain_data(0);
 //            disable_watchdog();
-            receive_lora_data(4);
+//            receive_lora_data(4);
+            receive_ublox_data(4);
             disable_watchdog();
             turn_OFF_GSM(get_gsm_power_mode());
         }
