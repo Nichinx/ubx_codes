@@ -388,7 +388,8 @@ void loop() {
       Watchdog.reset();
 //      send_rain_data(0);
 //      Watchdog.reset();
-      receive_lora_data(4);
+//      receive_lora_data(4);
+      receive_ublox_data(4);
       Watchdog.reset();
       attachInterrupt(RTCINTPIN, wake, FALLING);
       Watchdog.reset();
